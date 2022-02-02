@@ -50,7 +50,7 @@ Use the curl utility (or any other tool that supports http(s) file uploads) to u
 
 ```sh
 FILE="$(./octoscan.sh -o /tmp)"
-if curl -F "upload=@${FILE}" http://youruploadserver.yourdomain:8080
+if curl -F "upload=@${FILE}" http://youruploadserver.yourdomain:8080/upload/
 then
     rm "${FILE}"
 fi
