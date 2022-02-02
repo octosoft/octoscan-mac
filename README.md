@@ -24,7 +24,7 @@ Copy the shellscript octoscan.py on a USB stick. On the target Mac, open Termina
 
 ```sh
 $ cd /Volumes/MYSTICK
-./octoscan.py
+./octoscan.sh
 ```
 
 a .scam File will be created in the current directory. Manually copy the file to the OctoSAM import folder.
@@ -49,7 +49,7 @@ Octosoft provides upload servers for Windows and Linux. The Windows upload serve
 Use the curl utility (or any other tool that supports http(s) file uploads) to upload the generated file.
 
 ```sh
-FILE="$(./octoscan.pyz -o /tmp)"
+FILE="$(./octoscan.sh -o /tmp)"
 if curl -F "upload=@${FILE}" http://youruploadserver.yourdomain:8080
 then
     rm "${FILE}"
