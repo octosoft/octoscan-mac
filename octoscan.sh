@@ -100,9 +100,9 @@ mkdir "${basedir}"
 	/usr/sbin/sysctl -a >"${basedir}/sysctl.properties"
 
 	# fallback for system uuid
-	/usr/sbin/ioreg -a -rd1 -c IOPlatformExpertDevice >"${basedir}/IOPlatformExpertDevice.xml"
+	nice -n 20 /usr/sbin/ioreg -a -rd1 -c IOPlatformExpertDevice >"${basedir}/IOPlatformExpertDevice.xml"
 
-	/usr/sbin/system_profiler -xml SPApplicationsDataType SPSoftwareDataType SPMemoryDataType SPHardwareDataType SPDiagnosticsDataType SPDisplaysDataType SPDiscBurningDataType SPEthernetDataType SPPrintersDataType SPNetworkDataType SPSerialATADataType >"$basedir/system_profiler.xml"
+	nice -n 20 /usr/sbin/system_profiler -xml SPApplicationsDataType SPSoftwareDataType SPMemoryDataType SPHardwareDataType SPDiagnosticsDataType SPDisplaysDataType SPDiscBurningDataType SPEthernetDataType SPPrintersDataType SPNetworkDataType SPSerialATADataType >"$basedir/system_profiler.xml"
 
 	# scan apps
 
