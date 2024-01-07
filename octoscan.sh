@@ -136,13 +136,15 @@ mkdir "${basedir}"
 	done
 
 	# call the javas embedded in applications - here we have no plist so we need to actually call the command
+	# build same struture as the Linux scanner
 
 	mkdir -p "${basedir}/java/static"
 
 	cnt=1
 	find /Applications -name java -type f -perm +0111 -print | while read -r f; do
 		# excpet non-zero exit code
-		if $f -version >"${basedir}/java/static/java_${cnt}.txt" 2>&1; then
+		mkdir -p "${basedir}/java/static/opt_${cnt}"
+		if $f -version >"${basedir}/java/static/opt_${cnt}/version" 2>&1; then
 			:
 		fi
 		cnt=$((cnt + 1))
