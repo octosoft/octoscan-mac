@@ -7,16 +7,17 @@
 The macOS scanner for OctoSAM Inventory is a bash/zsh shell script that generates a zip archive with the filename extension .scam.
 
 Shell scripting is used to minimize dependencies on the operating system level. Only the shell script is needed to scan a system.
-Previous versions of the scanner were Python based, but in macOS 12.3 Apple decided to remove Python from the standard operating system.
+Previous versions of the scanner were implemented using Python, but in macOS 12.3 Apple decided to remove Python from the standard operating system.
 
 The scanner depends mainly on the standard macOS system_profiler utility. A couple of other tools are also used to provide further information.
 
-The structure of the generated .zip archive is backward compatible with the Python based scanner - however, to get full information for AD joined Macs, you need to be running OctoSAM 1.10.2.50 or later.
+The structure of the generated .zip archive is backward compatible with the old scanner - however, to get full information for AD-joined Macs, you need to be running OctoSAM 1.10.2.50 or later.
+Additional Java information is available with OctoSAM 1.10.7.80 or later.
 
 ### Invocation and Collection of Generated Files
 
 Typically the scanner is invoked using existing management infrastructure.
-Its highly recommended to start the scanner in the user's context (for example as a Launch Agent etc.) as that gives you valuable device affinity information.
+It's highly recommended to start the scanner in the user's context (for example as a Launch Agent etc.) as that gives you valuable device affinity information.
 
 ### Standalone Invocation
 
@@ -60,6 +61,6 @@ fi
 
 Depending on your system architecture and Mac management philosophy, it's sometimes easier to use a standard Package to install and configure the scanner on your Macs.
 
-Octosoft AG can provide you with a signed and notarized macOS package that installs the scanner with a site specific configuration.
-The package installs the scanner as a LaunchAgent to be started in user context. It provides error checking and automatic upload of the generated files to an OctoSAM upload server. The package will be generated on-demand with your site-specific configuration, so all you need to do is to install a .pkg file.
+Octosoft AG can provide you with a signed and notarized macOS package that installs the scanner with a site-specific configuration.
+The package installs the scanner as a LaunchAgent to be started in the user context. It provides error checking and automatic upload of the generated files to an OctoSAM upload server. The package will be generated on-demand with your site-specific configuration, so all you need to do is to install a .pkg file.
 

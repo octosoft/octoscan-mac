@@ -2,18 +2,17 @@
 #
 # OctoSAM Inventory scanner for macOS
 #
-# (c) 2020 Octosoft AG, CH-6312 Steinhausen, Switzerland
+# (c) 2024 Octosoft AG, CH-6312 Steinhausen, Switzerland
 # this code is licensed under the MIT licence
 #
 # in macos 12.3 Apple chose to remove python from the standard OS delivery
 # this is a bash/zsh only version of the scanner
 #
-# importing of ActiveDirectory or SMBIOS information requires OctoSAM Server 1.10.2.42 or newer
-#
 
-build="1.10.2 2022-02-02"
+build="1.10.7 2024-01-07"
 
-set -euo pipefail
+# for debugging/development only:
+# set -euo pipefail
 
 # running on zsh?
 if [[ "${ZSH_VERSION:-none}" != "none" ]]; then
@@ -128,6 +127,33 @@ mkdir "${basedir}"
 		fi
 	done
 
+	# older javas
+	for f in "/Library/Internet Plug-ins"/*/Contents/Info.plist; do
+		if [[ -r "$f" ]]; then
+			cp "$f" "${basedir}/java/java_${cnt}.plist"
+			cnt=$((cnt + 1))
+		fi
+	done
+
+	# call the javas embedded in applications - here we have no plist so we need to actually call the command
+
+	mkdir -p "${basedir}/java/static"
+
+	cnt=1
+	find /Applications -name java -type f -perm +0111 -print | while read -r f; do
+		# excpet non-zero exit code
+		if $f -version >"${basedir}/java/static/java_${cnt}.txt" 2>&1; then
+			:
+		fi
+		cnt=$((cnt + 1))
+	done
+
+	# get the java homes
+
+	mkdir -p "${basedir}/cmd"
+
+	/usr/libexec/java_home -V >${basedir}/cmd/java_home 2>&1
+
 	# get homebrew inventory if available
 
 	if which brew >/dev/null; then
@@ -153,12 +179,11 @@ EOF
 
 	# simplistic test if Kerberos is enabled
 	if [[ $(/usr/bin/dscl . read "/Users/${login}" AuthenticationAuthority | grep --count "Kerberosv5") -gt 0 ]]; then
-	
+
 		kerberos="true"
 	fi
 
-}  >"${basedir}/stdout.log" 2>"${basedir}/stderr.log"
-
+} >"${basedir}/stdout.log" 2>"${basedir}/stderr.log"
 
 cat >"${basedir}/octoscan.xml" <<EOF
 <?xml version="1.0" encoding="utf-8" ?>
