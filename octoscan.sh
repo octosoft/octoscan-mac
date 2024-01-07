@@ -183,6 +183,24 @@ EOF
 		kerberos="true"
 	fi
 
+    # virtualbox extensions
+
+    if [[ -d "/Applications/Virtualbox.app" ]]; then
+		mkdir -p "${basedir}/virtualbox"
+		if /Applications/Virtualbox.app/Contents/MacOS/VBoxManage list extpacks >"${basedir}/virtualbox/extpacks.txt"; then
+		 	:
+		fi
+	    cnt=1
+	    mkdir -p "${basedir}/virtualbox"
+
+	    for f in /Applications/Virtualbox.app/Contents/MacOS/ExtensionPacks/*/*.xml ; do
+		    if [[ -r "$f" ]]; then
+			    cp "$f" "${basedir}/virtualbox/extension_${cnt}.xml"
+			    cnt=$((cnt + 1))
+		    fi
+	    done
+	fi
+
 } >"${basedir}/stdout.log" 2>"${basedir}/stderr.log"
 
 cat >"${basedir}/octoscan.xml" <<EOF
