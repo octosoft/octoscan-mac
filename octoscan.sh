@@ -135,19 +135,48 @@ mkdir "${basedir}"
 		fi
 	done
 
-	# call the javas embedded in applications - here we have no plist so we need to actually call the command
-	# build same struture as the Linux scanner
+	# new in 1.10.7 call the java executables and get detailed version information
+	# the produced files are in the same format as the Linux scanner 
 
 	mkdir -p "${basedir}/java/static"
 
+	# caveats: remember that read from a pipe starts a subshell which would reset the counter
+	#          we use find pipe to read to deal with typical mac paths with spaces
+	
 	cnt=1
-	find /Applications -name java -type f -perm +0111 -print | while read -r f; do
-		# excpet non-zero exit code
+
+	find /Library /Applications -name java -type f -perm +0111 -print | while read -r f; do
+
+		echo "Found: ${f}"
 		mkdir -p "${basedir}/java/static/opt_${cnt}"
-		if $f -version >"${basedir}/java/static/opt_${cnt}/version" 2>&1; then
-			:
+
+		# TODO: check usagetracker and other features
+
+		# tivial check if its a JDK or JRE (we assume that JDK has a javac command)
+		VARIANT="JRE"
+
+		if [[ -f "${f}c" ]]; then
+			VARIANT="JDK"
 		fi
+
+		{
+			echo "Path: ${f}"
+			echo "Variant: ${VARIANT}"
+			echo "Features: "
+		} >"${basedir}/java/static/opt_${cnt}/version"
+
+		echo "$basedir/java/static/opt_${cnt}/version"
+
+		if "${f}" -version >>"${basedir}/java/static/opt_${cnt}/version" 2>&1; then
+			:
+		else
+			echo "FAILED: java -version failed for ${f} exit code $?" >>"${basedir}/java/static/opt_${cnt}/version"
+		fi
+
 		cnt=$((cnt + 1))
+
+		echo "cnt=$cnt"
+
 	done
 
 	# get the java homes
@@ -159,7 +188,6 @@ mkdir "${basedir}"
 	# get homebrew inventory if available
 
 	if which brew >/dev/null; then
-
 		mkdir -p "${basedir}/cmd"
 		brew info --json=v1 --installed >"${basedir}/cmd/brew.json"
 	fi
@@ -185,22 +213,22 @@ EOF
 		kerberos="true"
 	fi
 
-    # virtualbox extensions
+	# virtualbox extensions
 
-    if [[ -d "/Applications/Virtualbox.app" ]]; then
+	if [[ -d "/Applications/Virtualbox.app" ]]; then
 		mkdir -p "${basedir}/virtualbox"
 		if /Applications/Virtualbox.app/Contents/MacOS/VBoxManage list extpacks >"${basedir}/virtualbox/extpacks.txt"; then
-		 	:
+			:
 		fi
-	    cnt=1
-	    mkdir -p "${basedir}/virtualbox"
+		cnt=1
+		mkdir -p "${basedir}/virtualbox"
 
-	    for f in /Applications/Virtualbox.app/Contents/MacOS/ExtensionPacks/*/*.xml ; do
-		    if [[ -r "$f" ]]; then
-			    cp "$f" "${basedir}/virtualbox/extension_${cnt}.xml"
-			    cnt=$((cnt + 1))
-		    fi
-	    done
+		for f in /Applications/Virtualbox.app/Contents/MacOS/ExtensionPacks/*/*.xml; do
+			if [[ -r "$f" ]]; then
+				cp "$f" "${basedir}/virtualbox/extension_${cnt}.xml"
+				cnt=$((cnt + 1))
+			fi
+		done
 	fi
 
 } >"${basedir}/stdout.log" 2>"${basedir}/stderr.log"
