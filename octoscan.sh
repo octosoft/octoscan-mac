@@ -140,8 +140,10 @@ mkdir "${basedir}"
 
 	mkdir -p "${basedir}/java/static"
 
-	# caveats: remember that read from a pipe starts a subshell which would reset the counter
-	#          we use find pipe to read to deal with typical mac paths with spaces
+	#  remember that read from a pipe starts a subshell which would reset the counter
+	#  therefore we use only one find comommnd instead of a loop
+	#
+	#  we use find pipe to read here to deal with typical mac paths with spaces
 	
 	cnt=1
 
@@ -160,10 +162,10 @@ mkdir "${basedir}"
 		fi
 
 		{
-			echo "Path: ${f}"
-			echo "Variant: ${VARIANT}"
-			echo "Features: "
-		} >"${basedir}/java/static/opt_${cnt}/version"
+			echo "Path:${f}"
+			echo "Variant:${VARIANT}"
+			echo "Features:"
+		} > "${basedir}/java/static/opt_${cnt}/version"
 
 		echo "$basedir/java/static/opt_${cnt}/version"
 
@@ -183,7 +185,7 @@ mkdir "${basedir}"
 
 	mkdir -p "${basedir}/cmd"
 
-	/usr/libexec/java_home -V >${basedir}/cmd/java_home 2>&1
+	/usr/libexec/java_home -V > "${basedir}/cmd/java_home" 2>&1
 
 	# get homebrew inventory if available
 
@@ -246,7 +248,7 @@ EOF
 
 # zip in a subshell to retain the current directory
 (
-	cd "${otempdir}"
+	cd "${otempdir}" || exit 2
 	zip -rq "${outfile}" "${uuid}"
 )
 

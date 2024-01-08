@@ -21,7 +21,7 @@ It's highly recommended to start the scanner in the user's context (for example 
 
 ### Standalone Invocation
 
-Copy the shellscript octoscan.py on a USB stick. On the target Mac, open Terminal and navigate to the mounted stick and call the scanner.
+Copy the shell script octoscan.py on a USB stick. On the target Mac, open Terminal and navigate to the mounted stick and call the scanner.
 
 ```sh
 $ cd /Volumes/MYSTICK
