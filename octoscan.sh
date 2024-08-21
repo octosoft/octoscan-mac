@@ -9,7 +9,7 @@
 # this is a bash/zsh only version of the scanner
 #
 
-build="1.10.7 2024-01-07"
+build="1.10.9 2024-08-21"
 
 # for debugging/development only:
 # set -euo pipefail
