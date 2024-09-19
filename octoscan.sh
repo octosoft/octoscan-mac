@@ -72,7 +72,7 @@ esac
 outdir="$(pwd)"
 tag=""
 
-while getopts "o:" opt; do
+while getopts "o:t:" opt; do
 	case $opt in
 	o)
 		outdir=$OPTARG
@@ -244,8 +244,8 @@ cat >"${basedir}/octoscan.xml" <<EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <octoscan uuid="${uuid}" fqdn="${fqdn}" build="${build}" python="none" shell="${shell_version}" timestamp="${timestamp}" platform="${platform}" >
     <config>
-		<info name="tag" type="S" value="${tag}" />
-	</config>
+        <info name="tag" type="S" value="${tag}" />
+    </config>
     <user>
         <info name="login"    type="S"  value="${login}" />
         <info name="user_id"  type="I"  value="${user_id}" />
