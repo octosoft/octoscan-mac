@@ -9,7 +9,7 @@
 # this is a bash/zsh only version of the scanner
 #
 
-build="1.10.9 2024-08-21"
+build="1.10.9 2024-09-19"
 
 # for debugging/development only:
 # set -euo pipefail
@@ -70,11 +70,16 @@ esac
 #
 
 outdir="$(pwd)"
+tag=""
 
 while getopts "o:" opt; do
 	case $opt in
 	o)
 		outdir=$OPTARG
+		;;
+	t)
+		# for debugging
+		tag=$OPTARG
 		;;
 	*)
 		echo "Usage: octoscan.sh [-o output-directory]" >&2
@@ -238,6 +243,9 @@ EOF
 cat >"${basedir}/octoscan.xml" <<EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <octoscan uuid="${uuid}" fqdn="${fqdn}" build="${build}" python="none" shell="${shell_version}" timestamp="${timestamp}" platform="${platform}" >
+    <config>
+		<info name="tag" type="S" value="${tag}" />
+	</config>
     <user>
         <info name="login"    type="S"  value="${login}" />
         <info name="user_id"  type="I"  value="${user_id}" />
