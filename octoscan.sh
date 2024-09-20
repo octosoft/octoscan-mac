@@ -78,11 +78,11 @@ while getopts "o:t:" opt; do
 		outdir=$OPTARG
 		;;
 	t)
-		# for debugging
+		# tag is a short string that can be used to identify the scan
 		tag=$OPTARG
 		;;
 	*)
-		echo "Usage: octoscan.sh [-o output-directory]" >&2
+		echo "Usage: octoscan.sh [-o output-directory] [-t tag]" >&2
 		exit 2
 		;;
 	esac
@@ -174,9 +174,9 @@ mkdir "${basedir}"
 
 		echo "$basedir/java/static/opt_${cnt}/version"
 
-		DIRNAME="$(dirname "${f}")"
+		libdir="$(dirname "${f}")/../lib"
 
-		if [[ -f "${DIRNAME}/../lib/modules" ]]; then
+		if [[ -d "${libdir}" ]] && [[ -f "${libdir}/modules" ]] && [[ -f "${libdir}/libjava.dylib" ]]; then
 
 			if "${f}" -version >> "${basedir}/java/static/opt_${cnt}/version" 2>&1; then
 				:
@@ -185,7 +185,7 @@ mkdir "${basedir}"
 			fi
 
 		else
-			echo "FAILED: ${DIRNAME}/../lib/modules not found - probably not a standard java directory structure" >> "${basedir}/java/static/opt_${cnt}/version"
+			echo "FAILED: ${libdir} required files not found - probably not a standard java directory structure" >> "${basedir}/java/static/opt_${cnt}/version"
 		fi
 
 		cnt=$((cnt + 1))
