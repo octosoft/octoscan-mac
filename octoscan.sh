@@ -174,10 +174,18 @@ mkdir "${basedir}"
 
 		echo "$basedir/java/static/opt_${cnt}/version"
 
-		if "${f}" -version >>"${basedir}/java/static/opt_${cnt}/version" 2>&1; then
-			:
+		DIRNAME="$(dirname "${f}")"
+
+		if [[ -f "${DIRNAME}/../lib/modules" ]]; then
+
+			if "${f}" -version >> "${basedir}/java/static/opt_${cnt}/version" 2>&1; then
+				:
+			else
+				echo "FAILED: java -version failed for ${f} exit code $?" >> "${basedir}/java/static/opt_${cnt}/version"
+			fi
+
 		else
-			echo "FAILED: java -version failed for ${f} exit code $?" >>"${basedir}/java/static/opt_${cnt}/version"
+			echo "FAILED: ${DIRNAME}/../lib/modules not found - probably not a standard java directory structure" >> "${basedir}/java/static/opt_${cnt}/version"
 		fi
 
 		cnt=$((cnt + 1))
@@ -243,9 +251,9 @@ EOF
 cat >"${basedir}/octoscan.xml" <<EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <octoscan uuid="${uuid}" fqdn="${fqdn}" build="${build}" python="none" shell="${shell_version}" timestamp="${timestamp}" platform="${platform}" >
-    <config>
+    <configuration>
         <info name="tag" type="S" value="${tag}" />
-    </config>
+    </configuration>
     <user>
         <info name="login"    type="S"  value="${login}" />
         <info name="user_id"  type="I"  value="${user_id}" />
